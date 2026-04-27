@@ -289,21 +289,20 @@ def generate():
     # ------------------------
     # PPT
     # ------------------------
-   
     prs = Presentation()
 
-    # INTRO SLIDE
     from io import BytesIO
     from urllib.request import urlopen
 
+    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME", "dub8ndson")
+
+    # INTRO SLIDE
     intro_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/intro.jpg"
     try:
         with urlopen(intro_url, timeout=20) as response:
-           add_full_slide(prs, BytesIO(response.read()))
+            add_full_slide(prs, BytesIO(response.read()))
     except:
         pass
-
-    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME", "dub8ndson")
 
     # MAIN SLIDES
     for s in selected:
@@ -316,9 +315,6 @@ def generate():
             for ext in ("jpg", "jpeg", "png", "webp"):
                 img_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/{sid}_{idx}.{ext}"
                 try:
-                    from io import BytesIO
-                    from urllib.request import urlopen
-
                     with urlopen(img_url, timeout=20) as response:
                         image_stream = BytesIO(response.read())
 
@@ -333,95 +329,99 @@ def generate():
 
             idx += 1
 
-# THANK YOU SLIDE
-thankyou_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/thankyou.jpg"
-try:
-    with urlopen(thankyou_url, timeout=20) as response:
-        add_full_slide(prs, BytesIO(response.read()))
-except:
-    pass
-ppt_path = f"outputs/{client_name}.pptx"
-prs.save(ppt_path)
+    # THANK YOU SLIDE
+    thankyou_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/thankyou.jpg"
+    try:
+        with urlopen(thankyou_url, timeout=20) as response:
+            add_full_slide(prs, BytesIO(response.read()))
+    except:
+        pass
 
-zip_path = f"outputs/{client_name}.zip"
-with ZipFile(zip_path, "w") as zipf:
-    zipf.write(excel_path, os.path.basename(excel_path))
-    zipf.write(ppt_path, os.path.basename(ppt_path))
+    ppt_path = f"outputs/{client_name}.pptx"
+    prs.save(ppt_path)
 
-    
+    zip_path = f"outputs/{client_name}.zip"
+    with ZipFile(zip_path, "w") as zipf:
+        zipf.write(excel_path, os.path.basename(excel_path))
+        zipf.write(ppt_path, os.path.basename(ppt_path))
+
     return f"""
     <html>
     <head>
-    <title>Done</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Done</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <style>
-    body {{
-        font-family: Arial;
-        text-align: center;
-        margin-top: 40px;
-        padding: 20px;
-    }}
+        <style>
+        body {{
+            font-family: Arial;
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+        }}
 
-    .btn {{
-        display: block;
-        width: 80%;
-        margin: 10px auto;
-        padding: 12px;
-        background: black;
-        color: white;
-        text-decoration: none;
-        border-radius: 8px;
-        border: none;
-        font-size: 16px;
-    }}
+        .btn {{
+            display: block;
+            width: 80%;
+            margin: 10px auto;
+            padding: 12px;
+            background: black;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+        }}
 
-    .done-btn {{
-        background: #28a745;
-    }}
-    </style>
+        .done-btn {{
+            background: #28a745;
+        }}
+        </style>
     </head>
 
     <body>
 
-    <h2>✅ Files Generated</h2>
+        <h2>✅ Files Generated</h2>
 
-    <a class="btn" href="/download/{client_name}?type=ppt">Download PPT</a>
-    <a class="btn" href="/download/{client_name}?type=excel">Download Excel</a>
+        <a class="btn" href="/download/{client_name}?type=ppt">Download PPT</a>
+        <a class="btn" href="/download/{client_name}?type=excel">Download Excel</a>
 
-    <button class="btn" onclick="shareFiles()">Share</button>
+        <button class="btn" onclick="shareFiles()">Share</button>
 
-    <button class="btn done-btn" onclick="goHome()">Done</button>
+        <button class="btn done-btn" onclick="goHome()">Done</button>
 
-    <script>
-    async function shareFiles() {{
-        const pptUrl = window.location.origin + "/download/{{client_name}}?type=ppt";
-        const excelUrl = window.location.origin + "/download/{{client_name}}?type=excel";
+        <script>
+        async function shareFiles() {{
+            const pptUrl = window.location.origin + "/download/{client_name}?type=ppt";
+            const excelUrl = window.location.origin + "/download/{client_name}?type=excel";
 
-        try {{
-            const pptRes = await fetch(pptUrl);
-            const excelRes = await fetch(excelUrl);
-   
-            const pptBlob = await pptRes.blob();
-            const excelBlob = await excelRes.blob();
+            try {{
+                const pptRes = await fetch(pptUrl);
+                const excelRes = await fetch(excelUrl);
 
-            const pptFile = new File([pptBlob], "presentation.pptx", {{ type: pptBlob.type }});
-            const excelFile = new File([excelBlob], "data.xlsx", {{ type: excelBlob.type }});
+                const pptBlob = await pptRes.blob();
+                const excelBlob = await excelRes.blob();
 
-            if (navigator.canShare && navigator.canShare({{ files: [pptFile, excelFile] }})) {{
-                await navigator.share({{
-                    files: [pptFile, excelFile],
-                    title: "Files"
-               }});
-           }} else {{
-               alert("File sharing not supported on this device");
-           }}
-       }} catch (err) {{
-           alert("Error sharing files");
-           console.error(err);
-       }}
-    }}  
-    </script>
+                const pptFile = new File([pptBlob], "presentation.pptx", {{ type: pptBlob.type }});
+                const excelFile = new File([excelBlob], "data.xlsx", {{ type: excelBlob.type }});
+
+                if (navigator.canShare && navigator.canShare({{ files: [pptFile, excelFile] }})) {{
+                    await navigator.share({{
+                        files: [pptFile, excelFile],
+                        title: "Files"
+                    }});
+                }} else {{
+                    alert("File sharing not supported on this device");
+                }}
+            }} catch (err) {{
+                alert("Error sharing files");
+                console.error(err);
+            }}
+        }}
+
+        function goHome() {{
+            window.location.replace("/");
+        }}
+        </script>
 
     </body>
     </html>
