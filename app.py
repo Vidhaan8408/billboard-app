@@ -380,8 +380,8 @@ def generate():
 
     <script>
    async function shareFiles() {
-    const pptUrl = window.location.origin + "/download/{client_name}?type=ppt";
-    const excelUrl = window.location.origin + "/download/{client_name}?type=excel";
+    const pptUrl = window.location.origin + "/download/{{client_name}}?type=ppt";
+    const excelUrl = window.location.origin + "/download/{{client_name}}?type=excel";
 
     if (navigator.share) {
         try {
