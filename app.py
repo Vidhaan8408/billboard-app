@@ -291,8 +291,8 @@ def generate():
     # ------------------------
     prs = Presentation()
 
-    if os.path.exists("images/intro.jpg"):
-        add_full_slide(prs, "images/intro.jpg")
+if os.path.exists("images/intro.jpg"):
+    add_full_slide(prs, "images/intro.jpg")
 
     cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME", "dub8ndson")
 
