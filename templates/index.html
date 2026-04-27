@@ -113,6 +113,7 @@
 
         .site-row b {
             font-size: 17px;
+        }
    
         .site-row {
              display: flex;
@@ -191,7 +192,10 @@
             <b>{{ s.location }}</b>
 
             <div class="site-image">
-                <img src="/static/images/{{ s.id | int }}_1.jpg"
+                <img src="/static/previews/{{ s.id | int }}_1.jpg"
+     loading="lazy"
+     decoding="async"
+     onerror="this.style.display='none'">
                      loading="lazy"
                      decoding="async"
                      onerror="this.style.display='none'">
