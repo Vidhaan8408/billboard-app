@@ -294,18 +294,34 @@ def generate():
     if os.path.exists("images/intro.jpg"):
         add_full_slide(prs, "images/intro.jpg")
 
+    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME", "dub8ndson")
+
     for s in selected:
         sid = normalize_site_id(s.get("id"))
 
-        imgs = [
-            f for f in os.listdir("images")
-            if f.startswith(sid + "_")
-        ]
+        idx = 1
+        while True:
+            image_added = False
 
-        imgs.sort(key=natural_image_sort_key)
+            for ext in ("jpg", "jpeg", "png", "webp"):
+                img_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/{sid}_{idx}.{ext}"
+                try:
+                    from io import BytesIO
+                    from urllib.request import urlopen
 
-        for img in imgs:
-            add_full_slide(prs, os.path.join("images", img))
+                    with urlopen(img_url, timeout=20) as response:
+                        image_stream = BytesIO(response.read())
+
+                    add_full_slide(prs, image_stream)
+                    image_added = True
+                    break
+                except Exception:
+                    continue
+
+            if not image_added:
+                break
+
+            idx += 1
 
     if os.path.exists("images/thankyou.jpg"):
         add_full_slide(prs, "images/thankyou.jpg")
