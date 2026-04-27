@@ -378,30 +378,29 @@ def generate():
 
     <button class="btn done-btn" onclick="goHome()">Done</button>
 
-    <script>
-   async function shareFiles() {{
+<script>
+async function shareFiles() {{
     const pptUrl = window.location.origin + "/download/{{client_name}}?type=ppt";
     const excelUrl = window.location.origin + "/download/{{client_name}}?type=excel";
 
     if (navigator.share) {{
         try {{
-            await navigator.share({
+            await navigator.share({{
                 title: "Files",
-                text: "PPT:\n" + pptUrl + "\n\nExcel:\n" + excelUrl
-            });
+                text: "PPT:\\n" + pptUrl + "\\n\\nExcel:\\n" + excelUrl,
+            }});
         }} catch (err) {{
             alert("Sharing cancelled");
-        }
+        }}
     }} else {{
         alert("Sharing not supported on this device");
     }}
 }}
 
-    function goHome() {{
-        // 🔥 hard reset by reloading root
-        window.location.replace("/");
-    }}
-    </script>
+function goHome() {{
+    window.location.replace("/");
+}}
+</script>
 
 </body>
 </html>
