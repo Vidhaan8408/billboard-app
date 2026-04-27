@@ -334,14 +334,7 @@ if os.path.exists("images/intro.jpg"):
         zipf.write(excel_path, os.path.basename(excel_path))
         zipf.write(ppt_path, os.path.basename(ppt_path))
 
-    return f"""
-    <html>
-    <head>
-    <title>Done</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    
-    return f"""
+      return f"""
     <html>
     <head>
     <title>Done</title>
@@ -385,33 +378,33 @@ if os.path.exists("images/intro.jpg"):
 
     <button class="btn done-btn" onclick="goHome()">Done</button>
 
-     <script>
-       async function shareFiles() {{
-           const pptUrl = window.location.origin + "/download/{client_name}?type=ppt";
-           const excelUrl = window.location.origin + "/download/{client_name}?type=excel";
- 
-             if (navigator.share) {{
-                 try {{
-                     await navigator.share({{
-                      title: "Files",
-                      text: "PPT:\\n" + pptUrl + "\\n\\nExcel:\\n" + excelUrl,
-            }});
-        }} catch (err) {{
-            alert("Sharing cancelled");
+    <script>
+    async function shareFiles() {{
+        const pptUrl = window.location.origin + "/download/{client_name}?type=ppt";
+        const excelUrl = window.location.origin + "/download/{client_name}?type=excel";
+
+        if (navigator.share) {{
+            try {{
+                await navigator.share({{
+                    title: "Files",
+                    text: pptUrl + "\\n" + excelUrl
+                }});
+            }} catch (err) {{
+                alert("Sharing cancelled");
+            }}
+        }} else {{
+            alert("Sharing not supported on this device");
         }}
-    }} else {{
-        alert("Sharing not supported on this device");
     }}
-}}
 
-function goHome() {{
-    window.location.replace("/");
-}}
-</script>
+    function goHome() {{
+        window.location.replace("/");
+    }}
+    </script>
 
-</body>
-</html>
-"""
+    </body>
+    </html>
+    """
 
 
 @app.route("/download/<client_name>")
