@@ -286,51 +286,52 @@ def generate():
     excel_path = f"outputs/{client_name}.xlsx"
     wb.save(excel_path)
 
-   # ------------------------
-   # PPT
-   # ------------------------
-   prs = Presentation()
+    # ------------------------
+    # PPT
+    # ------------------------
+   
+    prs = Presentation()
 
-   # INTRO SLIDE
-   from io import BytesIO
-   from urllib.request import urlopen
+    # INTRO SLIDE
+    from io import BytesIO
+    from urllib.request import urlopen
 
-   intro_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/intro.jpg"
-   try:
-       with urlopen(intro_url, timeout=20) as response:
+    intro_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/intro.jpg"
+    try:
+        with urlopen(intro_url, timeout=20) as response:
            add_full_slide(prs, BytesIO(response.read()))
-   except:
-       pass
+    except:
+        pass
 
-   cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME", "dub8ndson")
+    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME", "dub8ndson")
 
-   # MAIN SLIDES
-   for s in selected:
-       sid = normalize_site_id(s.get("id"))
+    # MAIN SLIDES
+    for s in selected:
+        sid = normalize_site_id(s.get("id"))
 
-       idx = 1
-       while True:
-           image_added = False
+        idx = 1
+        while True:
+            image_added = False
 
-           for ext in ("jpg", "jpeg", "png", "webp"):
-               img_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/{sid}_{idx}.{ext}"
-               try:
-                   from io import BytesIO
-                   from urllib.request import urlopen
+            for ext in ("jpg", "jpeg", "png", "webp"):
+                img_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/{sid}_{idx}.{ext}"
+                try:
+                    from io import BytesIO
+                    from urllib.request import urlopen
 
-                   with urlopen(img_url, timeout=20) as response:
-                       image_stream = BytesIO(response.read())
+                    with urlopen(img_url, timeout=20) as response:
+                        image_stream = BytesIO(response.read())
 
-                   add_full_slide(prs, image_stream)
-                   image_added = True
-                   break
-               except Exception:
-                   continue
+                    add_full_slide(prs, image_stream)
+                    image_added = True
+                    break
+                except Exception:
+                    continue
 
-           if not image_added:
-               break
+            if not image_added:
+                break
 
-           idx += 1
+            idx += 1
 
 # THANK YOU SLIDE
 thankyou_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/thankyou.jpg"
