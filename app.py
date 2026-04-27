@@ -335,8 +335,15 @@ if os.path.exists("images/intro.jpg"):
         zipf.write(ppt_path, os.path.basename(ppt_path))
 
     return f"""
-<html>
-<head>
+    <html>
+    <head>
+    <title>Done</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    return f"""
+    <html>
+    <head>
     <title>Done</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -365,9 +372,9 @@ if os.path.exists("images/intro.jpg"):
         background: #28a745;
     }}
     </style>
-</head>
+    </head>
 
-<body>
+    <body>
 
     <h2>✅ Files Generated</h2>
 
@@ -378,16 +385,16 @@ if os.path.exists("images/intro.jpg"):
 
     <button class="btn done-btn" onclick="goHome()">Done</button>
 
-<script>
-async function shareFiles() {{
-    const pptUrl = window.location.origin + "/download/{client_name}?type=ppt";
-    const excelUrl = window.location.origin + "/download/{client_name}?type=excel";
-
-    if (navigator.share) {{
-        try {{
-            await navigator.share({{
-                title: "Files",
-                text: "PPT:\\n" + pptUrl + "\\n\\nExcel:\\n" + excelUrl,
+     <script>
+       async function shareFiles() {{
+           const pptUrl = window.location.origin + "/download/{client_name}?type=ppt";
+           const excelUrl = window.location.origin + "/download/{client_name}?type=excel";
+ 
+             if (navigator.share) {{
+                 try {{
+                     await navigator.share({{
+                      title: "Files",
+                      text: "PPT:\\n" + pptUrl + "\\n\\nExcel:\\n" + excelUrl,
             }});
         }} catch (err) {{
             alert("Sharing cancelled");
@@ -401,6 +408,18 @@ function goHome() {{
     window.location.replace("/");
 }}
 </script>
+
+</body>
+</html>
+"""
+
+
+@app.route("/download/<client_name>")
+def download(client_name):
+
+
+    
+    
 
 </body>
 </html>
