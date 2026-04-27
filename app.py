@@ -380,26 +380,32 @@ if os.path.exists("images/intro.jpg"):
 
     <script>
     async function shareFiles() {{
-        const pptUrl = window.location.origin + "/download/{client_name}?type=ppt";
-        const excelUrl = window.location.origin + "/download/{client_name}?type=excel";
+        const pptUrl = window.location.origin + "/download/{{client_name}}?type=ppt";
+        const excelUrl = window.location.origin + "/download/{{client_name}}?type=excel";
 
-        if (navigator.share) {{
-            try {{
+        try {{
+            const pptRes = await fetch(pptUrl);
+            const excelRes = await fetch(excelUrl);
+   
+            const pptBlob = await pptRes.blob();
+            const excelBlob = await excelRes.blob();
+
+            const pptFile = new File([pptBlob], "presentation.pptx", {{ type: pptBlob.type }});
+            const excelFile = new File([excelBlob], "data.xlsx", {{ type: excelBlob.type }});
+
+            if (navigator.canShare && navigator.canShare({{ files: [pptFile, excelFile] }})) {{
                 await navigator.share({{
-                    title: "Files",
-                    text: pptUrl + "\\n" + excelUrl
-                }});
-            }} catch (err) {{
-                alert("Sharing cancelled");
-            }}
-        }} else {{
-            alert("Sharing not supported on this device");
-        }}
-    }}
-
-    function goHome() {{
-        window.location.replace("/");
-    }}
+                    files: [pptFile, excelFile],
+                    title: "Files"
+               }});
+           }} else {{
+               alert("File sharing not supported on this device");
+           }}
+       }} catch (err) {{
+           alert("Error sharing files");
+           console.error(err);
+       }}
+    }}  
     </script>
 
     </body>
