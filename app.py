@@ -334,7 +334,7 @@ if os.path.exists("images/intro.jpg"):
         zipf.write(excel_path, os.path.basename(excel_path))
         zipf.write(ppt_path, os.path.basename(ppt_path))
 
-      return f"""
+    return f"""
     <html>
     <head>
     <title>Done</title>
