@@ -410,18 +410,6 @@ if os.path.exists("images/intro.jpg"):
 @app.route("/download/<client_name>")
 def download(client_name):
 
-
-    
-    
-
-</body>
-</html>
-"""
-
-
-@app.route("/download/<client_name>")
-def download(client_name):
-
     file_type = request.args.get("type")
 
     if file_type == "ppt":
