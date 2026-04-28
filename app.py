@@ -396,58 +396,61 @@ def generate():
             const excelUrl = window.location.origin + "/download/{client_name}?type=excel";
 
             try {{
+                // STEP 1: fetch files
                 const pptRes = await fetch(pptUrl);
                 const excelRes = await fetch(excelUrl);
 
                 if (!pptRes.ok || !excelRes.ok) {{
-                    throw new Error("Download fetch failed");
+                    throw new Error("File fetch failed");
                 }}
 
-                const pptBuffer = await pptRes.arrayBuffer();
-                const excelBuffer = await excelRes.arrayBuffer();
+                // STEP 2: convert to blobs (NOT arrayBuffer)
+                const pptBlob = await pptRes.blob();
+                const excelBlob = await excelRes.blob();
 
-                const pptFile = new File([pptBuffer], "presentation.pptx", {{
-                    type: "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                // STEP 3: create files with correct names
+                const pptFile = new File([pptBlob], "{client_name}.pptx", {{
+                    type: pptBlob.type || "application/vnd.openxmlformats-officedocument.presentationml.presentation"
                 }});
 
-                const excelFile = new File([excelBuffer], "data.xlsx", {{
-                    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                const excelFile = new File([excelBlob], "{client_name}.xlsx", {{
+                    type: excelBlob.type || "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 }});
 
+                // STEP 4: share files (MAIN PATH)
                 if (navigator.canShare && navigator.canShare({{ files: [pptFile, excelFile] }})) {{
                     await navigator.share({{
-                        title: "Veena Advertising Files",
                         files: [pptFile, excelFile]
                     }});
                     return;
                 }}
+
             }} catch (err) {{
-                console.log("File share failed, falling back:", err);
+                console.log("File share failed:", err);
             }}
 
-            const text = "PPT: " + pptUrl + "\nExcel: " + excelUrl;
-
+            // 🔻 FALLBACK 1: share links (iOS always supports this)
             try {{
                 if (navigator.share) {{
                     await navigator.share({{
-                        title: "Veena Advertising Files",
-                        text: text
+                        title: "{client_name}",
+                        text: pptUrl + "\n" + excelUrl
                     }});
                     return;
                 }}
             }} catch (err) {{
-                console.log("Link share failed, falling back to clipboard:", err);
+                console.log("Link share failed:", err);
             }}
 
+            // 🔻 FALLBACK 2: clipboard
             try {{
-                await navigator.clipboard.writeText(text);
-                alert("Share not available here. The links were copied.");
+                await navigator.clipboard.writeText(pptUrl + "\n" + excelUrl);
+                alert("Links copied to clipboard");
             }} catch (err) {{
-                alert(text);
+                alert(pptUrl + "\n" + excelUrl);
             }}
         }}
         </script>
-
     </body>
     </html>
     """
