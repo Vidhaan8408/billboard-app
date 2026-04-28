@@ -389,30 +389,34 @@ def generate():
 
         <button class="btn done-btn" onclick="goHome()">Done</button>
 
+        
         <script>
         async function shareFiles() {{
             const pptUrl = window.location.origin + "/download/{client_name}?type=ppt";
             const excelUrl = window.location.origin + "/download/{client_name}?type=excel";
-            const text = "PPT: " + pptUrl + "\\nExcel: " + excelUrl;
 
             try {{
                 const pptRes = await fetch(pptUrl);
                 const excelRes = await fetch(excelUrl);
 
-                const pptBlob = await pptRes.blob();
-                const excelBlob = await excelRes.blob();
+                if (!pptRes.ok || !excelRes.ok) {{
+                    throw new Error("Download fetch failed");
+                }}
 
-                const pptFile = new File([pptBlob], "presentation.pptx", {{
-                    type: pptBlob.type || "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                const pptBuffer = await pptRes.arrayBuffer();
+                const excelBuffer = await excelRes.arrayBuffer();
+
+                const pptFile = new File([pptBuffer], "presentation.pptx", {{
+                    type: "application/vnd.openxmlformats-officedocument.presentationml.presentation"
                 }});
-                const excelFile = new File([excelBlob], "data.xlsx", {{
-                    type: excelBlob.type || "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+                const excelFile = new File([excelBuffer], "data.xlsx", {{
+                    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 }});
 
                 if (navigator.canShare && navigator.canShare({{ files: [pptFile, excelFile] }})) {{
                     await navigator.share({{
                         title: "Veena Advertising Files",
-                        text: text,
                         files: [pptFile, excelFile]
                     }});
                     return;
@@ -420,6 +424,8 @@ def generate():
             }} catch (err) {{
                 console.log("File share failed, falling back:", err);
             }}
+
+            const text = "PPT: " + pptUrl + "\nExcel: " + excelUrl;
 
             try {{
                 if (navigator.share) {{
@@ -447,20 +453,36 @@ def generate():
     """
 
 
+from flask import send_file, request
+import os
+
 @app.route("/download/<client_name>")
 def download(client_name):
-
     file_type = request.args.get("type")
 
     if file_type == "ppt":
-        return send_file(f"outputs/{client_name}.pptx", as_attachment=True)
+        path = f"outputs/{client_name}.pptx"
+        return send_file(
+            path,
+            as_attachment=True,
+            download_name=f"{client_name}.pptx",
+            mimetype="application/vnd.openxmlformats-officedocument.presentationml.presentation"
+        )
 
     elif file_type == "excel":
-        return send_file(f"outputs/{client_name}.xlsx", as_attachment=True)
+        path = f"outputs/{client_name}.xlsx"
+        return send_file(
+            path,
+            as_attachment=True,
+            download_name=f"{client_name}.xlsx",
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
 
     else:
-        return send_file(f"outputs/{client_name}.zip", as_attachment=True)
-
-
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5050, use_reloader=False)
+        path = f"outputs/{client_name}.zip"
+        return send_file(
+            path,
+            as_attachment=True,
+            download_name=f"{client_name}.zip",
+            mimetype="application/zip"
+        )
