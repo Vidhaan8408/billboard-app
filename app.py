@@ -393,6 +393,7 @@ def generate():
         async function shareFiles() {{
             const pptUrl = window.location.origin + "/download/{client_name}?type=ppt";
             const excelUrl = window.location.origin + "/download/{client_name}?type=excel";
+            const text = "PPT: " + pptUrl + "\\nExcel: " + excelUrl;
 
             try {{
                 const pptRes = await fetch(pptUrl);
@@ -401,25 +402,43 @@ def generate():
                 const pptBlob = await pptRes.blob();
                 const excelBlob = await excelRes.blob();
 
-                const pptFile = new File([pptBlob], "presentation.pptx", {{ type: pptBlob.type }});
-                const excelFile = new File([excelBlob], "data.xlsx", {{ type: excelBlob.type }});
+                const pptFile = new File([pptBlob], "presentation.pptx", {{
+                    type: pptBlob.type || "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                }});
+                const excelFile = new File([excelBlob], "data.xlsx", {{
+                    type: excelBlob.type || "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                }});
 
                 if (navigator.canShare && navigator.canShare({{ files: [pptFile, excelFile] }})) {{
                     await navigator.share({{
-                        files: [pptFile, excelFile],
-                        title: "Files"
+                        title: "Veena Advertising Files",
+                        text: text,
+                        files: [pptFile, excelFile]
                     }});
-                }} else {{
-                    alert("File sharing not supported on this device");
+                    return;
                 }}
             }} catch (err) {{
-                alert("Error sharing files");
-                console.error(err);
+                console.log("File share failed, falling back:", err);
             }}
-        }}
 
-        function goHome() {{
-            window.location.replace("/");
+            try {{
+                if (navigator.share) {{
+                    await navigator.share({{
+                        title: "Veena Advertising Files",
+                        text: text
+                    }});
+                    return;
+                }}
+            }} catch (err) {{
+                console.log("Link share failed, falling back to clipboard:", err);
+            }}
+
+            try {{
+                await navigator.clipboard.writeText(text);
+                alert("Share not available here. The links were copied.");
+            }} catch (err) {{
+                alert(text);
+            }}
         }}
         </script>
 
