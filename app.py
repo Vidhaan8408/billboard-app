@@ -169,56 +169,39 @@ def render_result_page(client_name):
     async function shareFiles() {{
         const pptUrl = window.location.origin + "/download/{client_name}?type=ppt";
         const excelUrl = window.location.origin + "/download/{client_name}?type=excel";
-        const text = "PPT: " + pptUrl + "\\nExcel: " + excelUrl;
 
         try {{
             const pptRes = await fetch(pptUrl);
             const excelRes = await fetch(excelUrl);
 
-            const pptBlob = await pptRes.blob();
-            const excelBlob = await excelRes.blob();
+            if (!pptRes.ok || !excelRes.ok) {{
+                throw new Error("Download fetch failed");
+            }}
 
-            const pptFile = new File([pptBlob], "{client_name}.pptx", {{
-                type: pptBlob.type || "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-            }});
-            const excelFile = new File([excelBlob], "{client_name}.xlsx", {{
-                type: excelBlob.type || "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            }});
+            const pptFile = new File(
+                [await pptRes.arrayBuffer()],
+                "{client_name}.pptx",
+                {{ type: "application/vnd.openxmlformats-officedocument.presentationml.presentation" }}
+            );
 
-            if (navigator.canShare && navigator.canShare({{ files: [pptFile, excelFile] }})) {{
-                await navigator.share({{
-                    title: "Veena Advertising Files",
-                    text: text,
-                    files: [pptFile, excelFile]
-                }});
+            const excelFile = new File(
+                [await excelRes.arrayBuffer()],
+                "{client_name}.xlsx",
+                {{ type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }}
+            );
+
+            const shareData = {{ files: [pptFile, excelFile] }};
+
+            if (navigator.canShare && navigator.canShare(shareData)) {{
+                await navigator.share(shareData);
                 return;
             }}
-        }} catch (err) {{
-            console.log("File share failed, falling back:", err);
-        }}
 
-        try {{
-            if (navigator.share) {{
-                await navigator.share({{
-                    title: "Veena Advertising Files",
-                    text: text
-                }});
-                return;
-            }}
+            alert("This browser is refusing file sharing for these files.");
         }} catch (err) {{
-            console.log("Link share failed, falling back to clipboard:", err);
+            console.log("File share failed:", err);
+            alert("Share failed.");
         }}
-
-        try {{
-            await navigator.clipboard.writeText(text);
-            alert("Share not available here. The links were copied.");
-        }} catch (err) {{
-            alert(text);
-        }}
-    }}
-
-    function goHome() {{
-        window.location.replace("/");
     }}
     </script>
 
