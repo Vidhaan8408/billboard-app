@@ -491,12 +491,6 @@ def process_generation(job_id, form_data, selected, mode, client_name, batch_dat
                 if img:
                     add_full_slide(prs, img)
 
-        with ThreadPoolExecutor(max_workers=8) as executor:
-            image_results = list(executor.map(fetch_image_bytes, image_urls))
-
-        for img in image_results:
-            if img is not None:
-                add_full_slide(prs, img)
 
         # THANK YOU SLIDE
         thankyou_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/thankyou.jpg"
