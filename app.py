@@ -475,15 +475,21 @@ def process_generation(job_id, form_data, selected, mode, client_name, batch_dat
             pass
 
         # MAIN SLIDES
-        image_urls = []
-
         for s in selected:
             sid = normalize_site_id(s.get("id"))
+
             for idx in range(1, 6):
+                img = None
+
                 for ext in ("jpg", "jpeg", "png"):
-                    image_urls.append(
-                        f"https://res.cloudinary.com/{cloud_name}/image/upload/{sid}_{idx}.{ext}"
-                    )
+                    url = f"https://res.cloudinary.com/{cloud_name}/image/upload/{sid}_{idx}.{ext}"
+                    img = fetch_image_bytes(url)
+
+                    if img:
+                        break   # STOP after first valid image
+
+                if img:
+                    add_full_slide(prs, img)
 
         with ThreadPoolExecutor(max_workers=8) as executor:
             image_results = list(executor.map(fetch_image_bytes, image_urls))
