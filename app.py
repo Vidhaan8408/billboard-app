@@ -395,41 +395,13 @@ def process_generation(job_id, form_data, selected, mode, client_name, batch_dat
             
             for col_idx, value in enumerate(row_values, start=1):
                 c = ws.cell(row=excel_row, column=col_idx, value=value)
+
+                # Styling
                 c.border = border
                 c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
-                # Default fill
+                # ✅ KEEP ORIGINAL LOOK — single fill only
                 c.fill = data_fill
-
-                # -------- RATE COLUMN --------
-                rate_col = None
-                availability_col = None
-
-                if mode in ["rates", "both"]:
-                    rate_col = 9
-
-                if mode in ["availability", "both"]:
-                    availability_col = 9 if mode == "availability" else 10
-
-                # Apply rate color
-                if rate_col is not None and col_idx == rate_col:
-                    c.fill = PatternFill("solid", fgColor="FCE4D6")
-
-                # Apply availability color
-                if availability_col is not None and col_idx == availability_col:
-                    val = str(value).strip()
-
-                    if val == "Available Now":
-                        c.fill = PatternFill("solid", fgColor="C6EFCE")  # green
-
-                    elif val == "On Hold":
-                        c.fill = PatternFill("solid", fgColor="FFC7CE")  # red
-
-                    elif val == "":
-                        c.fill = PatternFill("solid", fgColor="FFFFFF")  # blank stays white
-
-                    else:
-                        c.fill = PatternFill("solid", fgColor="FFEB9C")  # yellow for dates
 
             location_length = len(str(location))
 
