@@ -337,15 +337,28 @@ def process_generation(job_id, form_data, selected, mode, client_name, batch_dat
         ws.merge_cells("H3:H4")
 
         next_col = 9
+        
         if mode in ["rates", "both"]:
-            ws.cell(row=3, column=next_col, value="Rate per month")
+            c = ws.cell(row=3, column=next_col, value="Rate per month")
             ws.merge_cells(start_row=3, start_column=next_col, end_row=4, end_column=next_col)
+
+            c.fill = header_fill
+            c.border = border
+            c.alignment = Alignment(horizontal="center", vertical="center")
+            c.font = Font(bold=True)
+
             next_col += 1
 
+
         if mode in ["availability", "both"]:
-            ws.cell(row=3, column=next_col, value="Availability")
+            c = ws.cell(row=3, column=next_col, value="Availability")
             ws.merge_cells(start_row=3, start_column=next_col, end_row=4, end_column=next_col)
 
+            c.fill = header_fill
+            c.border = border
+            c.alignment = Alignment(horizontal="center", vertical="center")
+            c.font = Font(bold=True)
+            
         data_start_row = 6
 
         for idx, s in enumerate(selected, start=1):
