@@ -46,12 +46,15 @@ def add_full_slide(prs, image):
     img_ratio = img_width / img_height
     slide_ratio = slide_width / slide_height
 
+    # 🔥 COVER MODE (no white bars)
     if img_ratio > slide_ratio:
-        width = slide_width
-        height = int(width / img_ratio)
-    else:
+        # image is wider → scale by height, crop sides
         height = slide_height
         width = int(height * img_ratio)
+    else:
+        # image is taller → scale by width, crop top/bottom
+        width = slide_width
+        height = int(width / img_ratio)
 
     left = int((slide_width - width) / 2)
     top = int((slide_height - height) / 2)
