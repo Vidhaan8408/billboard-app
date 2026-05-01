@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billboard Generator</title>
+
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Veena Ads">
+    <meta name="theme-color" content="#000000">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+            background: #f5f5f5;
+            color: #111;
+        }
+
+        h2 {
+            margin: 18px 0 10px;
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .full-input {
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background: #fff;
+            font-size: 16px;
+        }
+
+        .mode-group {
+            display: grid;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .mode-group label {
+            display: block;
+            font-size: 16px;
+        }
+
+        .mode-group input[type="radio"] {
+            transform: scale(1.15);
+            margin-right: 8px;
+        }
+
+        #batch-section {
+            margin-top: 16px;
+            padding: 14px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        #batch-section .section-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        #batch_date {
+            width: 100%;
+            min-height: 44px;
+            margin-bottom: 10px;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+            background: #fff;
+        }
+
+        .secondary-btn,
+        .generate-btn {
+            width: 100%;
+            min-height: 46px;
+            border: 0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .secondary-btn {
+            background: #111;
+            color: #fff;
+        }
+
+        .generate-btn {
+            margin-top: 18px;
+            background: #000;
+            color: #fff;
+        }
+
+        .site-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            gap: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .site-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .site-title {
+            font-size: 18px;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 10px;
+            word-break: break-word;
+        }
+
+        .site-image {
+            width: 100%;
+            margin: 8px 0 12px;
+        }
+
+        .site-image img {
+            display: block;
+            width: 100%;
+            height: 250px;
+            min-height: 250px;
+            object-fit: cover;
+            border-radius: 12px;
+            background: #eee;
+        }
+
+        .site-select-section {
+            margin-top: 6px;
+        }
+
+        .site-select-section label {
+            font-size: 16px;
+        }
+
+        .site-select-section input[type="checkbox"] {
+            transform: scale(1.15);
+            margin-right: 8px;
+        }
+
+        .availability-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 14px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .availability-section label {
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+        .availability-section input[type="radio"] {
+            transform: scale(1.15);
+            margin-right: 6px;
+        }
+
+        .site-date {
+            width: 100%;
+            min-height: 42px;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+            background: #fff;
+        }
+
+        .batch-side {
+            width: 76px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 4px;
+            flex-shrink: 0;
+        }
+
+        .batch-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .batch-select {
+            transform: scale(1.25);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .site-row {
+                flex-direction: column;
+            }
+
+            .batch-side {
+                width: 100%;
+                justify-content: flex-start;
+                align-items: center;
+                padding-bottom: 0;
+            }
+
+            .batch-label {
+                flex-direction: row;
+                justify-content: flex-start;
+                text-align: left;
+            }
+
+            .site-image img {
+                height: 230px;
+                min-height: 230px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <form method="POST" action="/generate">
+        <h2>Client Name</h2>
+        <input type="text" name="client_name" class="full-input" required>
+
+        <h2>Mode</h2>
+        <div class="mode-group">
+            <label><input type="radio" name="mode" value="standard" checked onclick="toggleAvailabilityUI()"> Standard</label>
+            <label><input type="radio" name="mode" value="rates" onclick="toggleAvailabilityUI()"> Rates</label>
+            <label><input type="radio" name="mode" value="availability" onclick="toggleAvailabilityUI()"> Availability</label>
+            <label><input type="radio" name="mode" value="both" onclick="toggleAvailabilityUI()"> Rate + Availability</label>
+        </div>
+
+        <div id="batch-section">
+            <div class="section-title">Batch Availability Date:</div>
+            <input type="date" id="batch_date" name="batch_date">
+            <button type="button" class="secondary-btn" onclick="applyBatchDate()">Apply Batch</button>
+        </div>
+
+        <h2>Sites</h2>
+
+        {% for s in sites %}
+        <div class="site-row">
+            <div class="site-main">
+                <div class="site-title">{{ s.location }}</div>
+
+                <div class="site-image">
+                    <img src="/static/previews/{{ s.id|int }}_1.jpg"
+                         loading="lazy"
+                         decoding="async"
+                         onerror="this.style.display='none'">
+                </div>
+
+                <div class="site-select-section">
+                    <label>
+                        <input type="checkbox" name="site" value="{{ s.id }}">
+                        Select
+                    </label>
+                </div>
+
+                <div class="availability-section">
+                    <label>
+                        <input type="radio" class="toggle-radio" name="availability_{{ s.id }}" value="now">
+                        Available Now
+                    </label>
+
+                    <label>
+                        <input type="radio" class="toggle-radio" name="availability_{{ s.id }}" value="date">
+                        Select Date
+                    </label>
+
+                    <label>
+                        <input type="radio" class="toggle-radio" name="availability_{{ s.id }}" value="hold">
+                        Hold
+                    </label>
+
+                    <input type="date" name="date_{{ s.id }}" class="site-date">
+                </div>
+            </div>
+
+            <div class="batch-side">
+                <label class="batch-label">
+                    <input type="checkbox" class="batch-select" name="batch_site" value="{{ s.id }}">
+                    <span>Batch</span>
+                </label>
+            </div>
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="generate-btn">Generate Files</button>
+    </form>
+</div>
+
+<script>
+function toggleAvailabilityUI() {
+    const mode = document.querySelector('input[name="mode"]:checked').value;
+    const show = (mode === "availability" || mode === "both");
+
+    document.getElementById("batch-section").style.display = show ? "block" : "none";
+
+    document.querySelectorAll(".availability-section").forEach(el => {
+        el.style.display = show ? "flex" : "none";
+    });
+
+    document.querySelectorAll(".site-select-section").forEach(el => {
+        el.style.display = show ? "none" : "block";
+    });
+}
+
+function applyBatchDate() {
+    const batchDate = document.getElementById("batch_date").value;
+
+    if (!batchDate) {
+        alert("Select a batch date first.");
+        return;
+    }
+
+    const batchSelected = document.querySelectorAll(".batch-select:checked");
+
+    if (batchSelected.length === 0) {
+        alert("Select batch sites (right side).");
+        return;
+    }
+
+    batchSelected.forEach(cb => {
+        const siteRow = cb.closest(".site-row");
+        const siteId = cb.value;
+
+        const dateRadio = siteRow.querySelector(`input[name="availability_${siteId}"][value="date"]`);
+        const dateInput = siteRow.querySelector(`input[name="date_${siteId}"]`);
+
+        if (dateRadio) dateRadio.checked = true;
+        if (dateInput) dateInput.value = batchDate;
+
+        cb.checked = false;
+    });
+}
+
+window.onload = function() {
+    toggleAvailabilityUI();
+};
+
+document.querySelectorAll(".toggle-radio").forEach(radio => {
+    radio.addEventListener("click", function() {
+        if (this.dataset.checked === "true") {
+            this.checked = false;
+            this.dataset.checked = "false";
+        } else {
+            document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+                r.dataset.checked = "false";
+            });
+            this.dataset.checked = "true";
+        }
+    });
+});
+</script>
+
+<script>
+function handleAvailabilityChange(radio) {
+    const siteRow = radio.closest(".site-row");
+    const dateInput = siteRow.querySelector(".site-date");
+
+    if (!dateInput) return;
+
+    if (radio.value === "date" && radio.checked) {
+        dateInput.disabled = false;
+    } else if (radio.checked) {
+        dateInput.value = "";
+        dateInput.disabled = true;
+    }
+}
+
+// Attach logic to all radios
+document.querySelectorAll(".toggle-radio").forEach(radio => {
+    radio.addEventListener("change", function() {
+        handleAvailabilityChange(this);
+    });
+});
+
+// On page load → disable all date inputs
+window.addEventListener("load", () => {
+    document.querySelectorAll(".site-date").forEach(input => {
+        input.disabled = true;
+    });
+});
+</script>
+</body>
+</html>

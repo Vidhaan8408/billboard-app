@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +9,7 @@
     <link rel="manifest" href="/static/manifest.json">
     <link rel="apple-touch-icon" href="/static/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">a
     <meta name="apple-mobile-web-app-title" content="Veena Ads">
     <meta name="theme-color" content="#000000">
 
@@ -61,6 +62,7 @@
         }
 
         #batch-section {
+            display: none;
             margin-top: 16px;
             padding: 14px;
             background: #fff;
@@ -172,6 +174,9 @@
         .availability-section label {
             font-size: 16px;
             white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .availability-section input[type="radio"] {
@@ -189,9 +194,14 @@
             background: #fff;
         }
 
+        .site-date:disabled {
+            background: #f3f3f3;
+            color: #888;
+        }
+
         .batch-side {
             width: 76px;
-            display: flex;
+            display: none;
             align-items: flex-end;
             justify-content: center;
             padding-bottom: 4px;
@@ -202,6 +212,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
             gap: 6px;
             font-size: 14px;
             text-align: center;
@@ -223,13 +234,14 @@
             .batch-side {
                 width: 100%;
                 justify-content: flex-start;
-                align-items: center;
-                padding-bottom: 0;
+                align-items: flex-start;
+                padding-top: 6px;
             }
 
             .batch-label {
                 flex-direction: row;
                 justify-content: flex-start;
+                align-items: center;
                 text-align: left;
             }
 
@@ -241,143 +253,210 @@
     </style>
 </head>
 <body>
+    <div class="page">
+        <form method="POST" action="/generate">
+            <h2>Client Name</h2>
+            <input type="text" name="client_name" class="full-input" required>
 
-<div class="page">
-    <form method="POST" action="/generate">
-        <h2>Client Name</h2>
-        <input type="text" name="client_name" class="full-input" required>
-
-        <h2>Mode</h2>
-        <div class="mode-group">
-            <label><input type="radio" name="mode" value="standard" checked onclick="toggleAvailabilityUI()"> Standard</label>
-            <label><input type="radio" name="mode" value="rates" onclick="toggleAvailabilityUI()"> Rates</label>
-            <label><input type="radio" name="mode" value="availability" onclick="toggleAvailabilityUI()"> Availability</label>
-            <label><input type="radio" name="mode" value="both" onclick="toggleAvailabilityUI()"> Rate + Availability</label>
-        </div>
-
-        <div id="batch-section">
-            <div class="section-title">Batch Availability Date:</div>
-            <input type="date" id="batch_date" name="batch_date">
-            <button type="button" class="secondary-btn" onclick="applyBatchDate()">Apply Batch</button>
-        </div>
-
-        <h2>Sites</h2>
-
-        {% for s in sites %}
-        <div class="site-row">
-            <div class="site-main">
-                <div class="site-title">{{ s.location }}</div>
-
-                <div class="site-image">
-                    <img src="/static/previews/{{ s.id|int }}_1.jpg"
-                         loading="lazy"
-                         decoding="async"
-                         onerror="this.style.display='none'">
-                </div>
-
-                <div class="site-select-section">
-                    <label>
-                        <input type="checkbox" name="site" value="{{ s.id }}">
-                        Select
-                    </label>
-                </div>
-
-                <div class="availability-section">
-                    <label>
-                        <input type="radio" class="toggle-radio" name="availability_{{ s.id }}" value="now">
-                        Available Now
-                    </label>
-
-                    <label>
-                        <input type="radio" class="toggle-radio" name="availability_{{ s.id }}" value="date">
-                        Select Date
-                    </label>
-
-                    <label>
-                        <input type="radio" class="toggle-radio" name="availability_{{ s.id }}" value="hold">
-                        Hold
-                    </label>
-
-                    <input type="date" name="date_{{ s.id }}" class="site-date">
-                </div>
+            <h2>Mode</h2>
+            <div class="mode-group">
+                <label><input type="radio" name="mode" value="standard" checked onclick="toggleAvailabilityUI()"> Standard</label>
+                <label><input type="radio" name="mode" value="rates" onclick="toggleAvailabilityUI()"> Rates</label>
+                <label><input type="radio" name="mode" value="availability" onclick="toggleAvailabilityUI()"> Availability</label>
+                <label><input type="radio" name="mode" value="both" onclick="toggleAvailabilityUI()"> Rate + Availability</label>
             </div>
 
-            <div class="batch-side">
-                <label class="batch-label">
-                    <input type="checkbox" class="batch-select" name="batch_site" value="{{ s.id }}">
-                    <span>Batch</span>
-                </label>
+            <div id="batch-section">
+                <div class="section-title">Batch Availability Date:</div>
+                <input type="date" id="batch_date" name="batch_date">
+                <button type="button" class="secondary-btn" onclick="applyBatchDate()">Apply Batch</button>
             </div>
-        </div>
-        {% endfor %}
 
-        <button type="submit" class="generate-btn">Generate Files</button>
-    </form>
-</div>
+            <h2>Sites</h2>
 
-<script>
-function toggleAvailabilityUI() {
-    const mode = document.querySelector('input[name="mode"]:checked').value;
-    const show = (mode === "availability" || mode === "both");
+            {% for s in sites %}
+            <div class="site-row">
+                <div class="site-main">
+                    <div class="site-title">{{ s.location }}</div>
 
-    document.getElementById("batch-section").style.display = show ? "block" : "none";
+                    <div class="site-image">
+                        <img src="/static/previews/{{ s.id | int }}_1.jpg"
+                             loading="lazy"
+                             decoding="async"
+                             onerror="this.style.display='none'">
+                    </div>
 
-    document.querySelectorAll(".availability-section").forEach(el => {
-        el.style.display = show ? "flex" : "none";
-    });
+                    <div class="site-select-section">
+                        <label>
+                            <input type="checkbox" name="site" value="{{ s.id }}">
+                            Select
+                        </label>
+                    </div>
 
-    document.querySelectorAll(".site-select-section").forEach(el => {
-        el.style.display = show ? "none" : "block";
-    });
-}
+                    <div class="availability-section">
+                        <label>
+                            <input type="radio" class="toggle-radio" name="availability_{{ s.id }}" value="now">
+                            Available Now
+                        </label>
 
-function applyBatchDate() {
-    const batchDate = document.getElementById("batch_date").value;
+                        <label>
+                            <input type="radio" class="toggle-radio" name="availability_{{ s.id }}" value="date">
+                            Select Date
+                        </label>
 
-    if (!batchDate) {
-        alert("Select a batch date first.");
-        return;
-    }
+                        <label>
+                            <input type="radio" class="toggle-radio" name="availability_{{ s.id }}" value="hold">
+                            Hold
+                        </label>
 
-    const batchSelected = document.querySelectorAll(".batch-select:checked");
+                        <input type="date" name="date_{{ s.id }}" class="site-date">
+                    </div>
+                </div>
 
-    if (batchSelected.length === 0) {
-        alert("Select batch sites (right side).");
-        return;
-    }
+                <div class="batch-side">
+                    <label class="batch-label">
+                        <input type="checkbox" class="batch-select" name="batch_site" value="{{ s.id }}">
+                        <span>Batch</span>
+                    </label>
+                </div>
+            </div>
+            {% endfor %}
 
-    batchSelected.forEach(cb => {
-        const siteRow = cb.closest(".site-row");
-        const siteId = cb.value;
+            <button type="submit" class="generate-btn">Generate Files</button>
+        </form>
+    </div>
 
-        const dateRadio = siteRow.querySelector(`input[name="availability_${siteId}"][value="date"]`);
-        const dateInput = siteRow.querySelector(`input[name="date_${siteId}"]`);
+    <script>
+        function syncAvailabilityRow(siteRow) {
+            const dateInput = siteRow.querySelector(".site-date");
+            if (!dateInput) return;
 
-        if (dateRadio) dateRadio.checked = true;
-        if (dateInput) dateInput.value = batchDate;
+            const selectedRadio = siteRow.querySelector('.availability-section input[type="radio"]:checked');
 
-        cb.checked = false;
-    });
-}
-
-window.onload = function() {
-    toggleAvailabilityUI();
-};
-
-document.querySelectorAll(".toggle-radio").forEach(radio => {
-    radio.addEventListener("click", function() {
-        if (this.dataset.checked === "true") {
-            this.checked = false;
-            this.dataset.checked = "false";
-        } else {
-            document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
-                r.dataset.checked = "false";
-            });
-            this.dataset.checked = "true";
+            if (selectedRadio && selectedRadio.value === "date") {
+                dateInput.disabled = false;
+            } else {
+                dateInput.value = "";
+                dateInput.disabled = true;
+            }
         }
-    });
-});
-</script>
 
+        function toggleAvailabilityUI() {
+            const modeInput = document.querySelector('input[name="mode"]:checked');
+            const mode = modeInput ? modeInput.value : "standard";
+            const show = (mode === "availability" || mode === "both");
+
+            document.getElementById("batch-section").style.display = show ? "block" : "none";
+
+            document.querySelectorAll(".availability-section").forEach(el => {
+                el.style.display = show ? "flex" : "none";
+            });
+
+            document.querySelectorAll(".site-select-section").forEach(el => {
+                el.style.display = show ? "none" : "block";
+            });
+
+            document.querySelectorAll(".batch-side").forEach(el => {
+                el.style.display = show ? "flex" : "none";
+            });
+
+            document.querySelectorAll(".site-row").forEach(siteRow => {
+                syncAvailabilityRow(siteRow);
+            });
+        }
+
+        document.querySelectorAll(".toggle-radio").forEach(radio => {
+            radio.dataset.checked = radio.checked ? "true" : "false";
+
+            radio.addEventListener("click", function() {
+                const siteRow = this.closest(".site-row");
+
+                if (this.dataset.checked === "true") {
+                    this.checked = false;
+                    this.dataset.checked = "false";
+                } else {
+                    document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+                        r.dataset.checked = "false";
+                    });
+                    this.checked = true;
+                    this.dataset.checked = "true";
+                }
+
+                syncAvailabilityRow(siteRow);
+            });
+        });
+
+        function applyBatchDate() {
+            const batchDate = document.getElementById("batch_date").value;
+
+            if (!batchDate) {
+                alert("Select a batch date first.");
+                return;
+            }
+
+            const batchSelected = document.querySelectorAll(".batch-select:checked");
+
+            if (batchSelected.length === 0) {
+                alert("Select batch sites (right side).");
+                return;
+            }
+
+            batchSelected.forEach(cb => {
+                const siteRow = cb.closest(".site-row");
+                const siteId = cb.value;
+
+                const dateRadio = siteRow.querySelector(`input[name="availability_${siteId}"][value="date"]`);
+                const dateInput = siteRow.querySelector(`input[name="date_${siteId}"]`);
+
+                if (dateRadio) {
+                    document.querySelectorAll(`input[name="${dateRadio.name}"]`).forEach(r => {
+                        r.dataset.checked = "false";
+                    });
+                    dateRadio.checked = true;
+                    dateRadio.dataset.checked = "true";
+                }
+
+                if (dateInput) {
+                    dateInput.disabled = false;
+                    dateInput.value = batchDate;
+                }
+
+                cb.checked = false;
+                syncAvailabilityRow(siteRow);
+            });
+        }
+
+        function resetAndGoHome() {
+            const form = document.querySelector("form");
+            if (form) form.reset();
+
+            document.querySelectorAll(".toggle-radio").forEach(r => {
+                r.dataset.checked = "false";
+                r.checked = false;
+            });
+
+            document.querySelectorAll(".site-date").forEach(input => {
+                input.value = "";
+                input.disabled = true;
+            });
+
+            document.querySelectorAll(".batch-select").forEach(cb => {
+                cb.checked = false;
+            });
+
+            toggleAvailabilityUI();
+            window.location.href = "/";
+        }
+
+        window.addEventListener("load", function() {
+            toggleAvailabilityUI();
+            document.querySelectorAll(".site-date").forEach(input => {
+                input.disabled = true;
+            });
+            document.querySelectorAll(".site-row").forEach(siteRow => {
+                syncAvailabilityRow(siteRow);
+            });
+        });
+    </script>
 </body>
 </html>
