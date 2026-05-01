@@ -32,10 +32,32 @@ def pick(s, *keys):
             return s[k]
     return ""
 
+def add_full_slide(prs, image):
+    from PIL import Image
 
-def add_full_slide(prs, path):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
-    slide.shapes.add_picture(path, 0, 0, width=prs.slide_width, height=prs.slide_height)
+
+    img = Image.open(image)
+    img_width, img_height = img.size
+
+    slide_width = prs.slide_width
+    slide_height = prs.slide_height
+
+    img_ratio = img_width / img_height
+    slide_ratio = slide_width / slide_height
+
+    if img_ratio > slide_ratio:
+        width = slide_width
+        height = int(width / img_ratio)
+    else:
+        height = slide_height
+        width = int(height * img_ratio)
+
+    left = int((slide_width - width) / 2)
+    top = int((slide_height - height) / 2)
+
+    image.seek(0)
+    slide.shapes.add_picture(image, left, top, width=width, height=height)
 
 
 def fetch_image_bytes(url):
