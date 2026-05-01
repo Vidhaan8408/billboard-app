@@ -41,7 +41,7 @@ def add_full_slide(prs, image):
     bg = slide.background
     fill = bg.fill
     fill.solid()
-    fill.fore_color.rgb = RGBColour(0,0,0)
+    fill.fore_color.rgb = RGBColor(0,0,0)
 
     img = Image.open(image)
     img_width, img_height = img.size
@@ -392,19 +392,60 @@ def process_generation(job_id, form_data, selected, mode, client_name, batch_dat
                 row_values.append(availability)
 
             excel_row = data_start_row + idx - 1
-
+            
             for col_idx, value in enumerate(row_values, start=1):
                 c = ws.cell(row=excel_row, column=col_idx, value=value)
-                c.fill = data_fill
                 c.border = border
                 c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
-            ws.row_dimensions[excel_row].height = 18
+                # Default fill
+                c.fill = data_fill
 
+                # -------- RATE COLUMN --------
+                rate_col = None
+                availability_col = None
+
+                if mode in ["rates", "both"]:
+                    rate_col = 9
+
+                if mode in ["availability", "both"]:
+                    availability_col = 9 if mode == "availability" else 10
+
+                # Apply rate color
+                if rate_col is not None and col_idx == rate_col:
+                    c.fill = PatternFill("solid", fgColor="FCE4D6")
+
+                # Apply availability color
+                if availability_col is not None and col_idx == availability_col:
+                    val = str(value).strip()
+
+                    if val == "Available Now":
+                        c.fill = PatternFill("solid", fgColor="C6EFCE")  # green
+
+                    elif val == "On Hold":
+                        c.fill = PatternFill("solid", fgColor="FFC7CE")  # red
+
+                    elif val == "":
+                        c.fill = PatternFill("solid", fgColor="FFFFFF")  # blank stays white
+
+                    else:
+                        c.fill = PatternFill("solid", fgColor="FFEB9C")  # yellow for dates
+
+            location_length = len(str(location))
+
+            if location_length > 80:
+                ws.row_dimensions[excel_row].height = 45
+            elif location_length > 60:
+                ws.row_dimensions[excel_row].height = 35
+            elif location_length > 40:
+                ws.row_dimensions[excel_row].height = 28
+            else:
+                ws.row_dimensions[excel_row].height = 20
+                
         widths = {
             "A": 8,
             "B": 12,
-            "C": 45,
+            "C": 60,
             "D": 7,
             "E": 7,
             "F": 8,
