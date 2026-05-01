@@ -32,20 +32,17 @@ def pick(s, *keys):
             return s[k]
     return ""
 
-
 def add_full_slide(prs, image):
     from PIL import Image
     from pptx.dml.color import RGBColor
 
     slide = prs.slides.add_slide(prs.slide_layouts[6])
-
-    # 🔹 Set slide background to black (removes white bars issue)
+    
     bg = slide.background
     fill = bg.fill
     fill.solid()
-    fill.fore_color.rgb = RGBColor(0, 0, 0)
+    fill.fore_color.rgb = RGBColour(0,0,0)
 
-    # 🔹 Open image to get size
     img = Image.open(image)
     img_width, img_height = img.size
 
@@ -55,13 +52,10 @@ def add_full_slide(prs, image):
     img_ratio = img_width / img_height
     slide_ratio = slide_width / slide_height
 
-    # 🔹 FIT MODE (NO distortion, NO cropping)
     if img_ratio > slide_ratio:
-        # image is wider → fit width
         width = slide_width
         height = int(width / img_ratio)
     else:
-        # image is taller → fit height
         height = slide_height
         width = int(height * img_ratio)
 
@@ -70,6 +64,7 @@ def add_full_slide(prs, image):
 
     image.seek(0)
     slide.shapes.add_picture(image, left, top, width=width, height=height)
+
 
 def fetch_image_bytes(url):
     try:
