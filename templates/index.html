@@ -284,17 +284,17 @@
 
                 <div class="availability-section">
                     <label>
-                        <input type="radio" name="availability_{{ s.id }}" value="now">
+                        <input type="radio" class="toggle-radio" name="availability_{{ s.id }}" value="now">
                         Available Now
                     </label>
 
                     <label>
-                        <input type="radio" name="availability_{{ s.id }}" value="date">
+                        <input type="radio" class="toggle-radio" name="availability_{{ s.id }}" value="date">
                         Select Date
                     </label>
 
                     <label>
-                        <input type="radio" name="availability_{{ s.id }}" value="hold">
+                        <input type="radio" class="toggle-radio" name="availability_{{ s.id }}" value="hold">
                         Hold
                     </label>
 
@@ -363,6 +363,20 @@ function applyBatchDate() {
 window.onload = function() {
     toggleAvailabilityUI();
 };
+
+document.querySelectorAll(".toggle-radio").forEach(radio => {
+    radio.addEventListener("click", function() {
+        if (this.dataset.checked === "true") {
+            this.checked = false;
+            this.dataset.checked = "false";
+        } else {
+            document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+                r.dataset.checked = "false";
+            });
+            this.dataset.checked = "true";
+        }
+    });
+});
 </script>
 
 </body>
