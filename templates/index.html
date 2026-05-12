@@ -85,7 +85,7 @@
                     rgba(255,255,255,0.12),
                     rgba(255,255,255,0.05));
             border: 1px solid rgba(255,255,255,0.12);
-            backdrop-filter: blur(24px);
+            backdrop-filter: blur(8px);
             box-shadow: 0 24px 60px rgba(0,0,0,0.35);
             animation: heroFloat 6s ease-in-out infinite;
         }
@@ -152,7 +152,7 @@
             border-radius: 999px;
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.12);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(6px);
             color: rgba(255,255,255,0.78);
             font-size: 14px;
             box-shadow: 0 10px 24px rgba(0,0,0,0.18);
@@ -167,7 +167,7 @@
             background: rgba(255,255,255,0.08);
             color: #fff;
             font-size: 16px;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(4px);
             transition: 0.25s ease;
             box-shadow: inset 0 0 0 rgba(255,255,255,0);
         }
@@ -203,7 +203,7 @@
             border-radius: 22px;
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(14px);
+            backdrop-filter: blur(5px);
             transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
@@ -230,7 +230,7 @@
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 18px;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(4px);
         }
 
         #batch-section .section-title {
@@ -277,7 +277,6 @@
             position: sticky;
             bottom: 18px;
             z-index: 20;
-            backdrop-filter: blur(12px);
         }
 
         .secondary-btn:hover,
@@ -301,8 +300,8 @@
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 30px;
-            backdrop-filter: blur(22px);
-            box-shadow: 0 24px 60px rgba(0,0,0,0.32);
+            backdrop-filter: blur(6px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.22);
             transition:
                 transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
                 box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
@@ -313,7 +312,7 @@
 
         .site-row:hover {
             transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 32px 80px rgba(0,0,0,0.42);
+            box-shadow: 0 18px 40px rgba(0,0,0,0.28);
             border-color: rgba(122,184,255,0.26);
         }
 
@@ -348,8 +347,8 @@
         .site-image img {
             display: block;
             width: 100%;
-            height: 320px;
-            min-height: 320px;
+            height: 240px;
+            min-height: 240px;
             object-fit: cover;
             border-radius: 24px;
             background: #111;
@@ -402,7 +401,7 @@
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.08);
             transition: all 0.22s ease;
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(4px);
         }
 
         .availability-section label:hover {
@@ -490,8 +489,8 @@
             }
 
             .site-image img {
-                height: 220px;
-                min-height: 220px;
+                height: 200px;
+                min-height: 200px;
             }
         }
     </style>
@@ -717,50 +716,6 @@
                 syncAvailabilityRow(siteRow);
             });
         });
-    </script>
-    <script>
-window.addEventListener("load", () => {
-    document.body.animate(
-        [
-            {
-                opacity: 0,
-                transform: "translateY(10px)"
-            },
-            {
-                opacity: 1,
-                transform: "translateY(0px)"
-            }
-        ],
-        {
-            duration: 650,
-            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-            fill: "forwards"
-        }
-    );
-
-    const cards = document.querySelectorAll('.site-row');
-
-    cards.forEach((card, index) => {
-        card.animate(
-            [
-                {
-                    opacity: 0,
-                    transform: 'translateY(40px) scale(0.98)'
-                },
-                {
-                    opacity: 1,
-                    transform: 'translateY(0px) scale(1)'
-                }
-            ],
-            {
-                duration: 700,
-                delay: index * 60,
-                easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-                fill: 'forwards'
-            }
-        );
-    });
-});
     </script>
 </body>
 </html>
