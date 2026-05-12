@@ -56,7 +56,7 @@
         }
 
         .page {
-            max-width: 1180px;
+            max-width: 1260px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
@@ -74,49 +74,88 @@
             }
         }
 
-        .app-header {
-            text-align: center;
+        .hero {
+            position: relative;
+            overflow: hidden;
             margin-bottom: 34px;
-            animation: heroFloat 5s ease-in-out infinite;
+            padding: 34px 30px;
+            border-radius: 34px;
+            background:
+                linear-gradient(145deg,
+                    rgba(255,255,255,0.12),
+                    rgba(255,255,255,0.05));
+            border: 1px solid rgba(255,255,255,0.12);
+            backdrop-filter: blur(24px);
+            box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+            animation: heroFloat 6s ease-in-out infinite;
         }
 
-        @keyframes heroFloat {
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(105,168,255,0.22), transparent 70%);
+            top: -260px;
+            right: -140px;
+            animation: pulseGlow 8s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
             0% {
-                transform: translateY(0px);
+                transform: scale(1);
+                opacity: 0.8;
             }
             50% {
-                transform: translateY(-4px);
+                transform: scale(1.08);
+                opacity: 1;
             }
             100% {
-                transform: translateY(0px);
+                transform: scale(1);
+                opacity: 0.8;
             }
         }
 
-        .app-logo {
-            font-size: 44px;
-            font-weight: 900;
+        .hero-top {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .hero-title {
+            font-size: clamp(44px, 6vw, 74px);
+            font-weight: 950;
+            line-height: 0.95;
             letter-spacing: 2px;
             margin-bottom: 10px;
-            background: linear-gradient(90deg, #ffffff 0%, #7ab8ff 55%, #ffffff 100%);
+            background: linear-gradient(90deg, #ffffff 0%, #69a8ff 50%, #ffffff 100%);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: shimmer 6s linear infinite;
+            animation: shimmer 7s linear infinite;
         }
 
-        @keyframes shimmer {
-            0% {
-                background-position: 0% center;
-            }
-            100% {
-                background-position: 200% center;
-            }
-        }
-
-        .app-subtitle {
-            font-size: 15px;
-            color: rgba(255,255,255,0.68);
+        .hero-sub {
+            font-size: 16px;
+            color: rgba(255,255,255,0.65);
             letter-spacing: 0.4px;
+            max-width: 650px;
+        }
+
+        .hero-chip {
+            padding: 14px 18px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            backdrop-filter: blur(12px);
+            color: rgba(255,255,255,0.78);
+            font-size: 14px;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.18);
         }
 
         .full-input {
@@ -154,22 +193,25 @@
         }
 
         .mode-group label {
+            position: relative;
+            overflow: hidden;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             font-size: 16px;
-            padding: 16px;
-            border-radius: 14px;
+            padding: 18px;
+            border-radius: 22px;
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            transition: 0.2s ease;
+            backdrop-filter: blur(14px);
+            transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .mode-group label:hover {
-            transform: translateY(-3px) scale(1.01);
+            transform: translateY(-5px);
             background: rgba(255,255,255,0.14);
-            border-color: rgba(122,184,255,0.35);
+            border-color: rgba(122,184,255,0.38);
+            box-shadow: 0 18px 36px rgba(0,0,0,0.22);
         }
 
         .mode-group input[type="radio"] {
@@ -228,16 +270,20 @@
         }
 
         .generate-btn {
-            margin-top: 24px;
+            margin-top: 34px;
             background: linear-gradient(135deg, #ffffff 0%, #d8e7ff 100%);
             color: #0b1020;
-            box-shadow: 0 10px 30px rgba(255,255,255,0.18);
+            box-shadow: 0 18px 44px rgba(255,255,255,0.22);
+            position: sticky;
+            bottom: 18px;
+            z-index: 20;
+            backdrop-filter: blur(12px);
         }
 
         .secondary-btn:hover,
         .generate-btn:hover {
-            transform: translateY(-3px) scale(1.01);
-            opacity: 0.98;
+            transform: translateY(-4px) scale(1.015);
+            opacity: 0.99;
         }
 
         .secondary-btn:active,
@@ -249,33 +295,34 @@
             display: flex;
             justify-content: space-between;
             align-items: stretch;
-            gap: 14px;
-            padding: 18px;
-            margin-bottom: 18px;
+            gap: 18px;
+            padding: 22px;
+            margin-bottom: 24px;
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 22px;
-            backdrop-filter: blur(18px);
-            box-shadow: 0 10px 35px rgba(0,0,0,0.22);
+            border-radius: 30px;
+            backdrop-filter: blur(22px);
+            box-shadow: 0 24px 60px rgba(0,0,0,0.32);
             transition:
-                transform 0.25s ease,
-                box-shadow 0.25s ease,
-                border-color 0.25s ease;
+                transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.3s ease;
             overflow: hidden;
             position: relative;
         }
 
         .site-row:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 48px rgba(0,0,0,0.32);
-            border-color: rgba(122,184,255,0.22);
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 32px 80px rgba(0,0,0,0.42);
+            border-color: rgba(122,184,255,0.26);
         }
 
         .site-row::before {
             content: "";
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent 45%);
+            background:
+                linear-gradient(135deg, rgba(255,255,255,0.08), transparent 42%);
             pointer-events: none;
         }
 
@@ -301,13 +348,16 @@
         .site-image img {
             display: block;
             width: 100%;
-            height: 270px;
-            min-height: 270px;
+            height: 320px;
+            min-height: 320px;
             object-fit: cover;
-            border-radius: 18px;
+            border-radius: 24px;
             background: #111;
             border: 1px solid rgba(255,255,255,0.08);
-            transition: transform 0.4s ease, filter 0.3s ease;
+            transition:
+                transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                filter 0.35s ease;
+            will-change: transform;
         }
 
         .site-image {
@@ -316,8 +366,8 @@
         }
 
         .site-row:hover .site-image img {
-            transform: scale(1.03);
-            filter: brightness(1.04);
+            transform: scale(1.05);
+            filter: brightness(1.08) saturate(1.06);
         }
 
         .site-select-section {
@@ -346,17 +396,19 @@
             white-space: nowrap;
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 10px 14px;
+            gap: 8px;
+            padding: 12px 16px;
             border-radius: 999px;
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.08);
-            transition: 0.2s ease;
+            transition: all 0.22s ease;
+            backdrop-filter: blur(12px);
         }
 
         .availability-section label:hover {
-            background: rgba(255,255,255,0.14);
-            border-color: rgba(122,184,255,0.22);
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(122,184,255,0.26);
+            transform: translateY(-2px);
         }
 
         .availability-section input[type="radio"] {
@@ -446,9 +498,21 @@
 </head>
 <body>
     <div class="page">
-        <div class="app-header">
-            <div class="app-logo">VEENA ADS</div>
-            <div class="app-subtitle">Premium Billboard Proposal Generator</div>
+        <div class="hero">
+            <div class="hero-top">
+
+                <div>
+                    <div class="hero-title">VEENA ADS</div>
+                    <div class="hero-sub">
+                        Intelligent billboard proposal system for premium outdoor advertising.
+                    </div>
+                </div>
+
+                <div class="hero-chip">
+                    Rajkot • Outdoor Media • Proposal Engine
+                </div>
+
+            </div>
         </div>
         <form method="POST" action="/generate">
             <h2>Client Name</h2>
@@ -654,19 +718,49 @@
             });
         });
     </script>
-</body>
-<script>
+    <script>
 window.addEventListener("load", () => {
     document.body.animate(
         [
-            { opacity: 0 },
-            { opacity: 1 }
+            {
+                opacity: 0,
+                transform: "translateY(10px)"
+            },
+            {
+                opacity: 1,
+                transform: "translateY(0px)"
+            }
         ],
         {
-            duration: 450,
-            easing: "ease"
+            duration: 650,
+            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            fill: "forwards"
         }
     );
+
+    const cards = document.querySelectorAll('.site-row');
+
+    cards.forEach((card, index) => {
+        card.animate(
+            [
+                {
+                    opacity: 0,
+                    transform: 'translateY(40px) scale(0.98)'
+                },
+                {
+                    opacity: 1,
+                    transform: 'translateY(0px) scale(1)'
+                }
+            ],
+            {
+                duration: 700,
+                delay: index * 60,
+                easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+                fill: 'forwards'
+            }
+        );
+    });
 });
-</script>
+    </script>
+</body>
 </html>
